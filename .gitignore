@@ -1,0 +1,26 @@
+# Files
+*.log
+*.txt
+*.sdf
+*.suo
+*.pdb
+*.orig
+*.aux
+*.bbl
+*.blg
+*.pro.user
+*.user
+*.iml
+*.xml
+*.csv
+
+#Folders
+*/.idea
+*/.ipynb_checkpoints
+Kaggle/FER_Database/FER2013
+Kaggle/FER_Database/train
+Kaggle/FER_Database/valid
+Kaggle/FER_Database/test
+TrainingHistory/*.png
+DetectScaleFaces/DetectScaleFaces/bin/Debug
+DetectScaleFaces/DetectScaleFaces/bin/Release

@@ -1,0 +1,14 @@
+net: "fazel.prototxt"
+# test_iter specifies how many forward passes the test should carry out.
+test_iter: 1000 # cover the full testing images.
+# Carry out testing every 80 training iterations.
+test_interval: 2000
+base_lr: 0.01
+lr_policy: "step"
+stepsize: 16000
+display: 1000
+max_iter: 16000
+momentum: 0.9
+weight_decay: 0.0005
+store_blobs_in_old_format: true
+solver_mode: GPU

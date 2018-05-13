@@ -1,0 +1,189 @@
+name: "L05"
+layer {
+  name: "data"
+  type: "Data"
+  top: "data"
+  include {
+    phase: TRAIN
+  }
+  data_param {
+    source: "data/text_restoration/data32_train_lmdb"
+    backend: LMDB
+    batch_size: 128
+  }
+}
+layer {
+  name: "label"
+  type: "Data"
+  top: "label"
+  include {
+    phase: TRAIN
+  }
+  data_param {
+    source: "data/text_restoration/labels16_train_lmdb"
+    backend: LMDB
+    batch_size: 128
+  }
+}
+layer {
+  name: "CONVX_1"
+  type: "Convolution"
+  bottom: "data"
+  top: "CONVX_1"
+
+  param { lr_mult: 1 decay_mult: 1 }
+  param { lr_mult: 2 decay_mult: 0 }
+  convolution_param {
+
+    kernel_size: 13
+    num_output: 128
+    stride: 1
+    pad: 0
+    group: 1
+
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "RELU_1"
+  type: "ReLU"
+  bottom: "CONVX_1"
+  top: "CONVX_1"
+}
+layer {
+  name: "CONVX_2"
+  type: "Convolution"
+  bottom: "CONVX_1"
+  top: "CONVX_2"
+
+  param { lr_mult: 1 decay_mult: 1 }
+  param { lr_mult: 2 decay_mult: 0 }
+  convolution_param {
+
+    kernel_size: 1
+    num_output: 256
+    stride: 1
+    pad: 0
+    group: 1
+
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "RELU_2"
+  type: "ReLU"
+  bottom: "CONVX_2"
+  top: "CONVX_2"
+}
+layer {
+  name: "CONVX_3"
+  type: "Convolution"
+  bottom: "CONVX_2"
+  top: "CONVX_3"
+
+  param { lr_mult: 1 decay_mult: 1 }
+  param { lr_mult: 2 decay_mult: 0 }
+  convolution_param {
+
+    kernel_size: 1
+    num_output: 256
+    stride: 1
+    pad: 0
+    group: 1
+
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "RELU_3"
+  type: "ReLU"
+  bottom: "CONVX_3"
+  top: "CONVX_3"
+}
+layer {
+  name: "CONVX_4"
+  type: "Convolution"
+  bottom: "CONVX_3"
+  top: "CONVX_4"
+
+  param { lr_mult: 1 decay_mult: 1 }
+  param { lr_mult: 2 decay_mult: 0 }
+  convolution_param {
+
+    kernel_size: 1
+    num_output: 256
+    stride: 1
+    pad: 0
+    group: 1
+
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "RELU_4"
+  type: "ReLU"
+  bottom: "CONVX_4"
+  top: "CONVX_4"
+}
+layer {
+  name: "CONVX_5"
+  type: "Convolution"
+  bottom: "CONVX_4"
+  top: "CONVX_5"
+
+  param { lr_mult: 0.1 decay_mult: 1 }
+  param { lr_mult: 0.2 decay_mult: 0 }
+  convolution_param {
+
+    kernel_size: 5
+    num_output: 1
+    stride: 1
+    pad: 0
+    group: 1
+
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "RELU_5"
+  type: "ReLU"
+  bottom: "CONVX_5"
+  top: "CONVX_5"
+}
+layer {
+  name: "loss"
+  type: "EuclideanLoss"
+  bottom: "label"
+  bottom: "CONVX_5"
+  top: "loss"
+}

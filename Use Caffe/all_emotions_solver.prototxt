@@ -1,0 +1,13 @@
+net: "all_emotions1.prototxt"
+# test_iter specifies how many forward passes the test should carry out.
+test_iter: 200 # cover the full testing images.
+# Carry out testing every 80 training iterations.
+test_interval: 1000
+base_lr: 0.01
+lr_policy: "step"
+stepsize: 10000
+display: 200
+max_iter: 10000
+momentum: 0.9
+weight_decay: 0.0005
+solver_mode: GPU

@@ -1,0 +1,15 @@
+net: "data/text_restoration/L10.prototxt"
+#iter_size: 1
+#lr_policy: "inv"
+#gamma: 0.0001
+#power: 0.9
+lr_policy: "step"
+gamma: 0.1
+stepsize: 100000
+display: 20
+max_iter: 300000
+momentum: 0.9
+weight_decay: 0.0005
+snapshot: 100000
+snapshot_prefix: "data/text_restoration/nets/L10"
+solver_mode: GPU

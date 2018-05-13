@@ -1,0 +1,14 @@
+train_net: "/home/lebedev/vgg_1024/1024_train.prototxt"
+base_lr: 0.01
+display: 1
+max_iter: 100
+lr_policy: "fixed"
+# gamma: 0.1
+# stepsize: 15000
+momentum: 0.9
+weight_decay: 0.0005
+snapshot: 1000
+snapshot_prefix: "/home/lebedev/vgg_1024/gpu_models/vggnet_cpu_test"
+solver_mode: CPU
+iter_size: 1
+type: "SGD"
