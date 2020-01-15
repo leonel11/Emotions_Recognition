@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 from scipy.misc import imsave
 from sklearn import metrics
 
-def getCountClases(mode):
+
+def GetCountClases(mode):
     if mode == 1:
         return 6
     if mode == 2:
@@ -14,11 +15,11 @@ def getCountClases(mode):
     return 0
 
 
-def getClassNumber(prototxt_file, caffemodel_file, picture_file, real_class, y_true, y_score):
+def GetClassNumber(prototxt_file, caffemodel_file, picture_file, real_class, y_true, y_score):
     image = caffe.io.load_image(picture_file, color=False)
     transformed_image = transformer.preprocess('data', image)
     # copy the image data into the memory allocated for the net
-    #mean_image = np.zeros([122, 122])
+    # mean_image = np.zeros([122, 122])
     mean_image = np.zeros([118, 118])
     mean_image.fill(0.5)
     net.blobs['data'].data[...] = transformed_image - mean_image
@@ -34,7 +35,8 @@ def getClassNumber(prototxt_file, caffemodel_file, picture_file, real_class, y_t
     print(predicted_class, real_class)
     return predicted_class
 
-def getSelectionAllocation(selection_file):
+
+def GetSelectionAllocation(selection_file):
     res = dict()
     with open(selection_file, 'r') as f:
         while 1:
@@ -45,12 +47,13 @@ def getSelectionAllocation(selection_file):
             res[dataline[0]] = int(dataline[1])
     return res
 
-def visualizeFilters(picture_file, layer_name):
+
+def VisualizeFilters(picture_file, layer_name):
     print(picture_file)
     image = caffe.io.load_image(picture_file, color=False)
     transformed_image = transformer.preprocess('data', image)
     # copy the image data into the memory allocated for the net
-    #mean_image = np.zeros([122, 122])
+    # mean_image = np.zeros([122, 122])
     mean_image = np.zeros([118, 118])
     mean_image.fill(0.5)
     net.blobs['data'].data[...] = transformed_image - mean_image
@@ -69,27 +72,29 @@ def visualizeFilters(picture_file, layer_name):
     			map_features[st_i+x, st_j+y] = int(255.0*data[0, i, x, y])
     imsave(layer_name+'.png', map_features)
 
-def buildConfusionMatrix(count_classes, selection_path, selection_file, prototxt_file, caffemodel_file):
+
+def BuildConfusionMatrix(count_classes, selection_path, selection_file, prototxt_file, caffemodel_file):
     conf_matr = np.zeros((count_classes, count_classes))
     list_pictures = os.listdir(selection_path)
-    selection_allocation = getSelectionAllocation(selection_file)
+    selection_allocation = GetSelectionAllocation(selection_file)
     y_true = []
     y_score = []
     for pict in list_pictures:
     	print(pict)
         real_class = selection_allocation[pict]
         picture_file = selection_path + '/' + pict
-        predicted_class = int(getClassNumber(prototxt_file, caffemodel_file, picture_file, real_class, y_true, y_score))
+        predicted_class = int(GetClassNumber(prototxt_file, caffemodel_file, picture_file, real_class, y_true, y_score))
         conf_matr[predicted_class, real_class] += 1
     np.set_printoptions(formatter={'int': '{}'.format})
     print(conf_matr)
     np.savetxt('y_true.txt', y_true, delimiter=' ')
     np.savetxt('y_score.txt', y_score, delimiter=' ')
-    #buildROC(y_true, y_score)
-    #visualizeFilters(selection_path + '/' + '201_01_02_051_06SMILE-15027__.bmp', 'pool0')
+    #BuildROC(y_true, y_score)
+    #VisualizeFilters(selection_path + '/' + '201_01_02_051_06SMILE-15027__.bmp', 'pool0')
     return conf_matr
 
-def computeErrors(count_classes, conf_matr):
+
+def ComputeErrors(count_classes, conf_matr):
     for class_numb in range(count_classes):
         precision = conf_matr[class_numb, class_numb] / np.sum(conf_matr[class_numb, :])
         recall = conf_matr[class_numb, class_numb] / np.sum(conf_matr[:, class_numb])
@@ -97,6 +102,7 @@ def computeErrors(count_classes, conf_matr):
         print('Class ' + str(class_numb) + ': precision=' + str(precision) + ', recall=' + str(recall) + ', f1=' + str(f1))
     acc = np.trace(conf_matr)/np.sum(conf_matr)
     print('Total accuracy: ' + str(acc))
+
 
 '''def buildROC(y_true, y_score):
     fpr, tpr, thresholds = metrics.roc_curve(y_true, y_score)
@@ -113,10 +119,12 @@ def computeErrors(count_classes, conf_matr):
     plt.ylabel('True Positive Rate')
     plt.savefig('roccurve.png')'''
 
-def getCNNSquad(net):
+
+def GetCNNSquad(net):
     # for each layer, show the output shape
     for layer_name, blob in net.blobs.iteritems():
         print(layer_name + '\t' + str(blob.data.shape))
+
 
 if len(sys.argv) != 6:
     print('Script must be run in the format:\n python ConfusionMatrix.py mode selection_path selection_file prototxt caffemodel\n')
@@ -129,7 +137,7 @@ else:
     selection_file = str(sys.argv[3])
     prototxt_file = str(sys.argv[4])
     caffemodel_file = str(sys.argv[5])
-    count_classes = getCountClases(mode)
+    count_classes = GetCountClases(mode)
 
     caffe.set_device(0)
     caffe.set_mode_gpu()
@@ -146,6 +154,6 @@ else:
                               1,  # 3-channel (BGR) images
                               118, 118)
                               #122, 122)  # image size is 122x122
-    conf_matr = buildConfusionMatrix(count_classes, selection_path, selection_file, prototxt_file, caffemodel_file)
-    computeErrors(count_classes, conf_matr)
-    getCNNSquad(net)
+    conf_matr = BuildConfusionMatrix(count_classes, selection_path, selection_file, prototxt_file, caffemodel_file)
+    ComputeErrors(count_classes, conf_matr)
+    GetCNNSquad(net)

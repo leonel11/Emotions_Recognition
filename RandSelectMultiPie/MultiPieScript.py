@@ -4,32 +4,36 @@ import shutil
 import datetime
 from numpy import random
 
+
 # get random directory on given path
-def getDir(pathtodirs):
+def GetDir(pathtodirs):
     dirs = os.listdir(pathtodirs)
     idx = random.randint(0, len(dirs))
     res = '/'+dirs[idx]
     return res
 
+
 # get the name of random picture on given path
-def getPictName(pathtopicts):
+def GetPictName(pathtopicts):
     pictlist = [pict for pict in os.listdir(pathtopicts)] # form list of pictures on given path
     idx = random.randint(0, len(pictlist))
     res = pictlist[idx]
     return res
 
-def getFileSelectionName(emotiontype, emotionscatter, curcount):
+
+def GetFileSelectionName(emotiontype, emotionscatter, curcount):
     if (emotiontype == 'N' or emotiontype == 'NS' or emotiontype == 'NOTSMILE'):
         nsemotions = ['AMAZED', 'LOOKING', 'DISGUIST', 'YAWNING', 'CALM']
         idx = random.randint(0, len(nsemotions))
         et = nsemotions[idx]
     else:
-        et = getFullEmotionName(emotiontype)
+        et = GetFullEmotionName(emotiontype)
     filename = str(et) + '-' + str(emotionscatter[et]+1) + '.png'
     return filename, et
 
+
 # get random folder of session on the type of emotion
-def getSessionDir(emotiontype):
+def GetSessionDir(emotiontype):
     if (emotiontype == 'S' or emotiontype == 'SMILE'):
         sessionlist = ['/session01', '/session03'] # Smile photos are contained only in session 1 and 3
     elif (emotiontype == 'A' or emotiontype == 'AMAZED' or emotiontype == 'L' or emotiontype == 'LOOKING'):
@@ -45,8 +49,9 @@ def getSessionDir(emotiontype):
     idx = random.randint(0, len(sessionlist))
     return sessionlist[idx]
 
+
 # get random folder of recording on given path and the type of emotion
-def getRecordingDir(pathtosubject, emotiontype):
+def GetRecordingDir(pathtosubject, emotiontype):
     if (emotiontype == 'S' or emotiontype == 'SMILE' or emotiontype == 'A' or emotiontype == 'AMAZED'):
         return '/02' # Smile and amazed photos are shooted only in recording 2
     elif (emotiontype == 'L' or emotiontype == 'LOOKING' or emotiontype == 'D' or emotiontype == 'DISGUIST' or
@@ -69,8 +74,9 @@ def getRecordingDir(pathtosubject, emotiontype):
         res = '/'+recordingdirs[idx]
         return res
 
+
 # get random folder of camera on given angle of view
-def getCameraDir(angle):
+def GetCameraDir(angle):
     cameralist = ['/05_1'] # initially only direct view (angle = 0) is correct for selection
     # add auxilary cameras with greater angle of view
     if angle >= 15:
@@ -83,8 +89,9 @@ def getCameraDir(angle):
     res = cameralist[idx]
     return res
 
+
 # get full name of emotion
-def getFullEmotionName(emotiontype):
+def GetFullEmotionName(emotiontype):
     if (emotiontype == 'S' or emotiontype == 'SMILE'):
         return 'SMILE'
     if (emotiontype == 'A' or emotiontype == 'AMAZED'):
@@ -99,44 +106,48 @@ def getFullEmotionName(emotiontype):
         return 'CALM'
     return emotiontype
 
+
 # get path to picture of selection and its new name
-def getSelectionPict(pathtodb, emotiontype, angle, emotionscatter, curcount):
+def GetSelectionPict(pathtodb, emotiontype, angle, emotionscatter, curcount):
     # form file name of file from selection
-    filenamepict, et = getFileSelectionName(emotiontype, emotionscatter, curcount)
+    filenamepict, et = GetFileSelectionName(emotiontype, emotionscatter, curcount)
     # form full path to random selected picture on given type of emotion and angle of view from Multi-Pie database
     datadir = '/data'
-    sessiondir = getSessionDir(et)
+    sessiondir = GetSessionDir(et)
     multiviewdir = '/multiview'
     pathtosubjects = pathtodb + datadir + sessiondir + multiviewdir
-    subjectdir = getDir(pathtosubjects)
+    subjectdir = GetDir(pathtosubjects)
     pathtosubject = pathtosubjects + subjectdir
-    recordingdir = getRecordingDir(pathtosubject, et)
+    recordingdir = GetRecordingDir(pathtosubject, et)
     pathtorecording = pathtosubject + recordingdir
-    cameradir = getCameraDir(angle)
+    cameradir = GetCameraDir(angle)
     pathtopicts = pathtorecording + cameradir
-    pictfilename = getPictName(pathtopicts)
+    pictfilename = GetPictName(pathtopicts)
     fullpathtopict = pathtopicts + '/' + pictfilename
     filenamepict = str(pictfilename.replace('.png', '')) + filenamepict
     return fullpathtopict, filenamepict, et
 
+
 # create the folder with photos of selection. If folder is not empty, it rewrites
-def createSelectionFolder(foldername):
+def CreateSelectionFolder(foldername):
     pathtodir = os.getcwd() + '\\' + foldername # form full path to the folder with selection
     if os.path.exists(pathtodir):
         shutil.rmtree(pathtodir) # remove existing folder with the same name
     os.makedirs(pathtodir)
     return pathtodir
 
+
 # copy pictures from Multi-Pie database to the folder of selection
-def copySelection(selectionpath, pictures, names):
+def CopySelection(selectionpath, pictures, names):
     idx = 0
     for pict in pictures :
         shutil.copy(pict, selectionpath+'/'+names[idx])
         idx += 1
     return
 
+
 # make log-file with full paths to chosen selection photos from Multi-Pie database
-def makeLog(foldername, select, names, emotionscatter):
+def MakeLog(foldername, select, names, emotionscatter):
     now = datetime.datetime.now()
     logname = foldername + '__' + now.strftime("%d.%m.%Y__%H-%M-%S") + '.log' # form the name of log-file
     f = open(logname, 'w')
@@ -150,6 +161,7 @@ def makeLog(foldername, select, names, emotionscatter):
         f.write(pictpath + '     ' + names[idx] + '\n') # writing to log-file
         idx += 1
     return
+
 
 pathtodb = input('Please, enter the path to Multi-Pie: ')
 if not os.path.isdir(pathtodb): # check the rightness of path to Multi-Pie database
@@ -191,18 +203,18 @@ emotionscatter = {'AMAZED': 0, 'LOOKING': 0, 'DISGUIST': 0, 'YAWNING': 0, 'CALM'
 # dictionary-scater of different types of not smiling emotions
 print('\nMaking selection...')
 while (curcount < countphotos):
-    pict, filenamepict, et = getSelectionPict(pathtodb, emotiontype, angle, emotionscatter, curcount)
+    pict, filenamepict, et = GetSelectionPict(pathtodb, emotiontype, angle, emotionscatter, curcount)
     if pict not in set(listphotos): # new photo is selected for selection
         listphotos.append(pict)
         curcount += 1
         emotionscatter[et] += 1
         listnames.append(filenamepict)
 print('Files for selection are choosen!')
-selectionpath = createSelectionFolder(foldername)
+selectionpath = CreateSelectionFolder(foldername)
 print('Copying files...')
-copySelection(selectionpath, listphotos, listnames)
+CopySelection(selectionpath, listphotos, listnames)
 print('All files of selection are copied!')
-makeLog(foldername, listphotos, listnames, emotionscatter)
+MakeLog(foldername, listphotos, listnames, emotionscatter)
 print('Log-file is created!')
 print('Selection is created!')
 input("Press any key to continue...")

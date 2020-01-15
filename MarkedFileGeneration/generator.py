@@ -2,12 +2,14 @@ import os.path as pth
 import glob
 import sys
 
+
 # Get all file names of pictures from the selection
 def GetAllFilesOfDirectory(folder):
     searchmask = folder + '/*'
     listfiles = glob.glob(searchmask)
     files = [pth.basename(file) for file in listfiles]
     return files
+
 
 # Get class number for picture dependiong on task
 def GetLabel(task, imgfile):
@@ -30,6 +32,7 @@ def GetLabel(task, imgfile):
         else: # task: Smile Detection
             return 1
 
+
 # Make marked file
 # Format of file: list of strings 'imagename classnumber'
 def MakeMarkedFile(task, pathtoselection, markedfile):
@@ -38,6 +41,7 @@ def MakeMarkedFile(task, pathtoselection, markedfile):
     with open(markedfile, 'w') as f:
         for idx in range(0, len(labels)):
             f.write(str(listimages[idx]) + ' ' + str(labels[idx]) + '\n')
+
 
 task = input('Choose the task (1 - Emotions Recognition, 2 - Smile Detection): ')
 if task != '1' and task != '2': # check the right input for chosen task

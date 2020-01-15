@@ -4,6 +4,7 @@ import numpy as np
 import sys
 from sklearn import metrics
 
+
 # Get true and predicted labels of classes
 def GetLabels(y_true_file, y_score_file):
     y_true, y_score = [], []
@@ -14,11 +15,13 @@ def GetLabels(y_true_file, y_score_file):
         y_score = np.loadtxt(y_score_file, delimiter=' ').tolist()
     return y_true, y_score
 
+
 # Calculate AUC-ROC value
 def CalculateAucRoc(y_true, y_score):
     fpr, tpr, _ = metrics.roc_curve(y_true, y_score) # get FPR and TPR values for ROC curve
     auc = metrics.roc_auc_score(y_true, y_score)
     return fpr, tpr, auc
+
 
 # Build ROC curve
 def BuildRocCurve(fpr, tpr):
@@ -31,6 +34,7 @@ def BuildRocCurve(fpr, tpr):
     plt.ylabel('True Positive Rate')
     plt.legend(loc="lower right")
     plt.show()
+
 
 if (len(sys.argv) != 3): # checking of right call
     print('The call of this script looks like this:\n' +
